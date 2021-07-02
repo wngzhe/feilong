@@ -173,6 +173,7 @@ errors = {
                15: ("Failed to live resize cpus of guest: '%(userid)s', "
                    "error: enable new defined cpus failed: '%(err)s'."),
                16: ("Failed to start the guest: '%(userid)s', %(msg)s")
+               17: ("Failed to restart the guest: '%(userid)s', %(msg)s")
               },
               "Operation on Guest failed"
               ],

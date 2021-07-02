@@ -508,9 +508,20 @@ class SMTClient(object):
             self._request(requestData)
 
     def guest_reboot(self, userid):
-        requestData = ' '.join(("PowerVM", userid, "reboot"))
-        with zvmutils.log_and_reraise_smt_request_failed():
-            self._request(requestData)
+        power_state = self.get_power_state(userid)
+        IUCV_reachable = self.get_guest_connection_status(userid)
+        if power_state == 'on' and IUCV_reachable:
+            with zvmutils.log_and_reraise_smt_request_failed():
+                requestData = ' '.join(("PowerVM", userid, "reboot"))
+                self._request(requestData)
+        else:
+            msg = ("Failed to reboot for power state is %s"
+                   " IUCV connection status %s ."
+                   % (power_state, IUCV_reachable))
+            LOG.error(msg)
+            raise exception.SDKGuestOperationError(rs=17, msg=msg)
+
+
 
     def guest_reset(self, userid):
         requestData = ' '.join(("PowerVM", userid, "reset"))
